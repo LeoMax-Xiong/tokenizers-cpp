@@ -1,84 +1,40 @@
 # tokenizers-cpp
 
-This project provides a cross-platform C++ tokenizer binding library that can be universally deployed.
-It wraps and binds the [HuggingFace tokenizers library](https://github.com/huggingface/tokenizers)
-and [sentencepiece](https://github.com/google/sentencepiece) and provides a minimum common interface in C++.
+## 介绍
+这个工程提供了一个跨平台的C++ tokenizer库，这个库可以作为一个通用的tokenizer库进行部署使用。
 
-The main goal of the project is to enable tokenizer deployment for language model applications
-to native platforms with minimum dependencies and remove some of the barriers of
-cross-language bindings. This project is developed in part with and
-used in [MLC LLM](https://github.com/mlc-ai/mlc-llm). We have tested the following platforms:
+这个库是对 [HuggingFace tokenizers library](https://github.com/huggingface/tokenizers) 和 [sentencepiece](https://github.com/google/sentencepiece) 进行封装，同时这个库是对c++一个最小依赖库。
 
-- iOS
-- Android
-- Windows
-- Linux
-- Web browser
+这个库的目标是给基于语言模型的应用服务以最小依赖提供 tokenizer 本地部署能力，同时移除了跨平台封装的一些障碍。这个库也是 [MLC LLM](https://github.com/mlc-ai/mlc-llm) 工程的一部分。
 
-## Getting Started
+我们已经再如下的平台上完成了测试：
 
-The easiest way is to add this project as a submodule and then
-include it via `add_sub_directory` in your CMake project.
-You also need to turn on `c++17` support.
+* ios
+* Android
+* Windows
+* Linux
+* Web browser
 
-- First, you need to make sure you have rust installed.
-- If you are cross-compiling make sure you install the necessary target in rust.
-  For example, run `rustup target add aarch64-apple-ios` to install iOS target.
-- You can then link the library
+## 开始
 
-See [example](example) folder for an example CMake project.
+使用这个库的最简单的方式是将这个库添加为一个仓库的子模块，然后通过CMake的 `add_sub_directory` 命令添加这个仓库的头文件。需要注意的是，你的编辑器需要开启 `c++17` 的支持。
 
-### Example Code
+* 首先，你需要确保你本地已经安装了 `rust`
+* 如果你正在进行交叉编译，需要确保目标平台 `rust` 相关依赖已经安装好了。例如，运行 `rustup target add aarch64-apple-ios` 安装 iOS 平台的相关依赖。
+* 你需要链接 tokenizer 这个库
 
-```c++
-// - dist/tokenizer.json
-void HuggingFaceTokenizerExample() {
-  // Read blob from file.
-  auto blob = LoadBytesFromFile("dist/tokenizer.json");
-  // Note: all the current factory APIs takes in-memory blob as input.
-  // This gives some flexibility on how these blobs can be read.
-  auto tok = Tokenizer::FromBlobJSON(blob);
-  std::string prompt = "What is the capital of Canada?";
-  // call Encode to turn prompt into token ids
-  std::vector<int> ids = tok->Encode(prompt);
-  // call Decode to turn ids into string
-  std::string decoded_prompt = tok->Decode(ids);
-}
+在 [example](example) 文件夹下有 CMake 工程的示例代码
 
-void SentencePieceTokenizerExample() {
-  // Read blob from file.
-  auto blob = LoadBytesFromFile("dist/tokenizer.model");
-  // Note: all the current factory APIs takes in-memory blob as input.
-  // This gives some flexibility on how these blobs can be read.
-  auto tok = Tokenizer::FromBlobSentencePiece(blob);
-  std::string prompt = "What is the capital of Canada?";
-  // call Encode to turn prompt into token ids
-  std::vector<int> ids = tok->Encode(prompt);
-  // call Decode to turn ids into string
-  std::string decoded_prompt = tok->Decode(ids);
-}
-```
 
-### Extra Details
 
-Currently, the project generates three static libraries
-- `libtokenizers_c.a`: the c binding to tokenizers rust library
-- `libsentencepice.a`: sentencepiece static library
-- `libtokenizers_cpp.a`: the cpp binding implementation
+## 其他的细节内容
+当下，这个工程提供三种静态库：
+* `libtokenizers_c.a`: C 语言对 `rust` 库的封装
+* `libsentencepice.a`: sentencepiece 的静态库
+* `libtokenizers_cpp.a` C++ 实现
 
-If you are using an IDE, you can likely first use cmake to generate
-these libraries and add them to your development environment.
-If you are using cmake, `target_link_libraries(yourlib tokenizers_cpp)`
-will automatically links in the other two libraries.
-You can also checkout [MLC LLM](https://github.com/mlc-ai/mlc-llm)
-for as an example of complete LLM chat application integrations.
+如果你正在使用 IDE，你可以先试用cmake生成这三个库，然后将这三个库添加到你正在开发的环境中。
 
-## Javascript Support
+如果你正在使用 cmake，通过 `target_link_libraries(yourlib tokenizers_cpp)` 这个命令将会自动量链接这两个库。
 
-We use emscripten to expose tokenizer-cpp to wasm and javascript.
-Checkout [web](web) for more details.
-
-## Acknowledgements
-
-This project is only possible thanks to the shoulders open-source ecosystems that we stand on.
-This project is based on sentencepiece and tokenizers library.
+当然你也可以下载 [MLC LLM](https://github.com/mlc-ai/mlc-llm)，尝试通过 MLC 将该库集成R到一个 LLM 应用中

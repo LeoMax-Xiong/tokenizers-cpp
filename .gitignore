@@ -36,3 +36,4 @@ Cargo.lock
 package-lock.json
 rust/target
 .vscode
+*.idea
